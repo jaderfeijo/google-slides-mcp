@@ -1,0 +1,18 @@
+services:
+  ci:
+    build:
+      context: .
+      dockerfile: Dockerfile.ci
+    working_dir: /work
+    volumes:
+      - .:/work
+      # Keep container node_modules separate from the macOS host's.
+      - ci_node_modules:/work/node_modules
+    command: >
+      bash -c "npm ci
+      && npm run typecheck
+      && npm test
+      && ./scripts/build-mcpb.sh"
+
+volumes:
+  ci_node_modules:

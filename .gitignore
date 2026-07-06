@@ -1,0 +1,8 @@
+node_modules/
+dist/
+bundle/
+out/
+*.mcpb
+*.log
+.DS_Store
+client_secret*.json

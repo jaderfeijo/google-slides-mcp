@@ -1,0 +1,30 @@
+{
+	"name": "slides-mcp",
+	"version": "0.1.0",
+	"private": true,
+	"description": "Google Slides MCP server for Claude Desktop",
+	"type": "module",
+	"engines": {
+		"node": ">=20"
+	},
+	"scripts": {
+		"build": "tsc",
+		"typecheck": "tsc --noEmit",
+		"test": "vitest run",
+		"test:mac": "SLIDES_MCP_KEYCHAIN_TESTS=1 vitest run",
+		"bundle": "./scripts/build-mcpb.sh"
+	},
+	"license": "MIT",
+	"dependencies": {
+		"@googleapis/slides": "^5.0.1",
+		"@modelcontextprotocol/sdk": "^1.29.0",
+		"google-auth-library": "^10.9.0",
+		"zod": "^3.25.76"
+	},
+	"devDependencies": {
+		"@anthropic-ai/mcpb": "^2.1.2",
+		"@types/node": "^26.1.0",
+		"typescript": "^6.0.3",
+		"vitest": "^4.1.10"
+	}
+}
