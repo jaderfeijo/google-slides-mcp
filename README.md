@@ -169,6 +169,22 @@ Setup steps are equally scriptable:
 `node dist/cli.js setup status`, `node dist/cli.js setup step …`,
 `node dist/cli.js auth import <client_secret.json>`, and so on.
 
+### Releasing
+
+Tests run in CI on every push and pull request to `master`. A release is
+cut by pushing a version tag prefixed with `prod/`:
+
+```sh
+git tag prod/v0.2.0
+git push origin prod/v0.2.0
+```
+
+The release workflow refuses to publish unless the test suite passes and
+the tag matches the version in `package.json` and `manifest.json`. It
+then builds the `.mcpb`, attaches a GitHub build-provenance attestation,
+and publishes a release with the artefact, its SHA-256 checksum, and
+verification instructions.
+
 ## Security and privacy
 
 - Traffic goes exclusively from your machine to Google. No telemetry, no
