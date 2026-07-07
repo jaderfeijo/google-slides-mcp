@@ -2,7 +2,7 @@
 	"manifest_version": "0.3",
 	"name": "slides-mcp",
 	"display_name": "Google Slides",
-	"version": "0.1.0",
+	"version": "1.0.0",
 	"description": "Full programmatic control of Google Slides from Claude Desktop.",
 	"author": {
 		"name": "Jader Feijo"
@@ -16,14 +16,18 @@
 		"entry_point": "dist/index.js",
 		"mcp_config": {
 			"command": "node",
-			"args": ["${__dirname}/dist/index.js"],
+			"args": [
+				"${__dirname}/dist/index.js"
+			],
 			"env": {
 				"SLIDES_MCP_LOG_LEVEL": "${user_config.log_level}"
 			}
 		}
 	},
 	"compatibility": {
-		"platforms": ["darwin"],
+		"platforms": [
+			"darwin"
+		],
 		"runtimes": {
 			"node": ">=20"
 		}
