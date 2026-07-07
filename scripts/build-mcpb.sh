@@ -21,4 +21,12 @@ cp -R dist bundle/dist
 npx mcpb validate bundle/manifest.json
 npx mcpb pack bundle "$ARTEFACT"
 
+# Self-check: the packed artefact must run on its own bundled node_modules.
+EXTRACT_DIR=$(mktemp -d)
+trap 'rm -rf "$EXTRACT_DIR"' EXIT
+unzip -q "$ARTEFACT" -d "$EXTRACT_DIR"
+node "$EXTRACT_DIR/dist/cli.js" >/dev/null 2>&1 \
+	|| { echo "self-check failed: bundled cli.js did not run" >&2; exit 1; }
+echo "self-check ok: bundled server runs from the extracted artefact"
+
 shasum -a 256 "$ARTEFACT" | tee out/checksums.txt
