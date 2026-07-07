@@ -14,9 +14,10 @@ export function setupRequired(detail: string): SetupRequiredPayload {
 		status: "setup_required",
 		message: `slides-mcp is installed but not yet connected to a Google account: ${detail}`,
 		next_steps:
-			"Guided setup is not available in this build. From a terminal, run:\n" +
-			"  node dist/cli.js auth import <path-to-client_secret.json>\n" +
-			"  node dist/cli.js auth login\n" +
-			"See the README for creating the Google Cloud OAuth client.",
+			"Call the get_setup_status tool now, then guide the user through " +
+			"the one-time setup with run_setup_step, narrating each step and " +
+			"asking before anything that opens a browser, creates cloud " +
+			"resources, or installs software. Setup takes about 10 minutes and " +
+			"is resumable at any point.",
 	};
 }

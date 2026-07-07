@@ -2,7 +2,7 @@
 
 TIER ?= core
 
-.PHONY: help deps build run inspect test test-mac auth-import auth-login auth-status auth-remove bundle ci clean
+.PHONY: help deps build run inspect test test-mac auth-import auth-login auth-status auth-remove diagnostics bundle ci clean
 
 help: ## list available targets
 	@awk -F':.*## ' '/^[a-z-]+:.*## / { printf "  make %-14s %s\n", $$1, $$2 }' Makefile
@@ -37,6 +37,9 @@ auth-status: build ## show configured client and account
 
 auth-remove: build ## revoke and remove an account: make auth-remove [EMAIL=a@b.com]
 	node dist/cli.js auth remove $(EMAIL)
+
+diagnostics: build ## run the health checks with named fixes
+	node dist/cli.js diagnostics
 
 bundle: build ## build the installable .mcpb into out/
 	./scripts/build-mcpb.sh
