@@ -74,6 +74,7 @@ const unconfiguredDeps = (engine: SetupEngine): ToolDeps => ({
 		throw new Error("unreachable");
 	},
 	setup: engine,
+	diagnostics: {} as ToolDeps["diagnostics"],
 });
 
 const capture = (tools: AnyToolDefinition[], deps: ToolDeps) => {

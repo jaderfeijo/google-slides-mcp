@@ -70,7 +70,8 @@ const configuredDeps = async (
 	}));
 	// Content-tool tests never touch the setup engine.
 	const setup = {} as ToolDeps["setup"];
-	return { keychain, auth, slides: () => slides, setup };
+	const diagnostics = {} as ToolDeps["diagnostics"];
+	return { keychain, auth, slides: () => slides, setup, diagnostics };
 };
 
 describe("create_presentation", () => {
@@ -167,6 +168,7 @@ describe("registerTools wrapper", () => {
 			}),
 			slides: () => fakeSlides({}).client,
 			setup: {} as ToolDeps["setup"],
+		diagnostics: {} as ToolDeps["diagnostics"],
 		};
 		const handlers = capture([createPresentation], deps);
 
