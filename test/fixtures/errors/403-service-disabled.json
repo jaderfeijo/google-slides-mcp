@@ -1,0 +1,18 @@
+{
+	"response": {
+		"status": 403,
+		"data": {
+			"error": {
+				"code": 403,
+				"message": "Google Slides API has not been used in project 123456 before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/slides.googleapis.com/overview?project=123456 then retry.",
+				"status": "PERMISSION_DENIED",
+				"errors": [
+					{
+						"reason": "accessNotConfigured",
+						"message": "Access Not Configured."
+					}
+				]
+			}
+		}
+	}
+}
