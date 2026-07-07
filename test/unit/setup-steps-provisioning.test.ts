@@ -56,6 +56,7 @@ const ctxWith = (
 	runAuthFlow: (async () => {
 		throw new Error("unused");
 	}) as never,
+	getAccessToken: async () => "at-test",
 	fetch: (async () => new Response()) as typeof fetch,
 	slides: () => {
 		throw new Error("unused");

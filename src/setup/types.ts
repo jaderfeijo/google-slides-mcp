@@ -101,6 +101,8 @@ export interface StepContext {
 	exec: ExecRunner;
 	fs: SetupFs;
 	runAuthFlow: typeof runPkceFlow;
+	/** Resolves a fresh access token for an account (AuthManager-backed). */
+	getAccessToken: (account?: string) => Promise<string>;
 	fetch: typeof globalThis.fetch;
 	slides: SlidesClientFactory;
 	platform: NodeJS.Platform;

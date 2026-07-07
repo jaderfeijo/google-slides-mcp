@@ -1,5 +1,6 @@
 import { homedir } from "node:os";
 
+import { AuthManager } from "../auth/manager.js";
 import { runPkceFlow } from "../auth/pkce.js";
 import type { KeychainStore } from "../keychain/store.js";
 import type { SlidesClientFactory } from "../google/slides-client.js";
@@ -15,6 +16,7 @@ export function buildSetupEngine(
 	slides: SlidesClientFactory,
 ): SetupEngine {
 	const home = homedir();
+	const auth = new AuthManager(keychain);
 	return new SetupEngine(
 		{
 			keychain,
@@ -22,6 +24,7 @@ export function buildSetupEngine(
 			exec: defaultExecRunner,
 			fs: defaultSetupFs,
 			runAuthFlow: runPkceFlow,
+			getAccessToken: (account) => auth.getAccessToken(account),
 			fetch: globalThis.fetch,
 			slides,
 			platform: process.platform,
