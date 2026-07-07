@@ -1,0 +1,21 @@
+{
+	"response": {
+		"status": 429,
+		"headers": {
+			"retry-after": "32"
+		},
+		"data": {
+			"error": {
+				"code": 429,
+				"message": "Quota exceeded for quota metric 'Write requests' and limit 'Write requests per minute per user' of service 'slides.googleapis.com'.",
+				"status": "RESOURCE_EXHAUSTED",
+				"errors": [
+					{
+						"reason": "rateLimitExceeded",
+						"message": "Rate limit exceeded"
+					}
+				]
+			}
+		}
+	}
+}

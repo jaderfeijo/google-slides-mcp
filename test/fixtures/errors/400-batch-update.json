@@ -1,0 +1,12 @@
+{
+	"response": {
+		"status": 400,
+		"data": {
+			"error": {
+				"code": 400,
+				"message": "Invalid requests[3].createSlide: The object (slide-4) could not be created because the ID is already in use.",
+				"status": "INVALID_ARGUMENT"
+			}
+		}
+	}
+}

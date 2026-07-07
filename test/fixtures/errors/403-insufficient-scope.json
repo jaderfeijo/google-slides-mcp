@@ -1,0 +1,18 @@
+{
+	"response": {
+		"status": 403,
+		"data": {
+			"error": {
+				"code": 403,
+				"message": "Request had insufficient authentication scopes.",
+				"status": "PERMISSION_DENIED",
+				"errors": [
+					{
+						"reason": "ACCESS_TOKEN_SCOPE_INSUFFICIENT",
+						"message": "Insufficient Permission"
+					}
+				]
+			}
+		}
+	}
+}
