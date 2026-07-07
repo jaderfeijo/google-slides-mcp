@@ -18,6 +18,7 @@ import {
 import { createSlidesClient } from "./google/slides-client.js";
 import { SecurityCliKeychain } from "./keychain/security-cli.js";
 import type { KeychainStore } from "./keychain/store.js";
+import { importClientJson } from "./setup/client-import.js";
 import { buildSetupEngine } from "./setup/context.js";
 import type { SetupEngine } from "./setup/engine.js";
 import { STEP_IDS, type StepId } from "./setup/types.js";
@@ -37,11 +38,6 @@ Usage:
 
 const log = (line: string): void => void process.stderr.write(`${line}\n`);
 
-/** Google's Desktop-app client download shape. */
-interface InstalledClientJson {
-	installed?: { client_id?: string; client_secret?: string; project_id?: string };
-}
-
 async function authImport(
 	keychain: KeychainStore,
 	path?: string,
@@ -50,25 +46,12 @@ async function authImport(
 		log("Missing path. Usage: auth import <path-to-client_secret.json>");
 		return 1;
 	}
-	const parsed = JSON.parse(
-		await readFile(path, "utf8"),
-	) as InstalledClientJson;
-	const installed = parsed.installed;
-	if (!installed?.client_id || !installed.client_secret) {
-		log(
-			'Not a Desktop-app OAuth client JSON (expected an "installed" key ' +
-				"with client_id and client_secret). In the Google console create " +
-				"Create Client → Desktop app, then download its JSON.",
-		);
+	const result = await importClientJson(keychain, await readFile(path, "utf8"));
+	if (!result.ok) {
+		log(`Import rejected: ${result.reason}.`);
 		return 1;
 	}
-	const config: ClientConfig = {
-		clientId: installed.client_id,
-		clientSecret: installed.client_secret,
-		projectId: installed.project_id,
-	};
-	await keychain.set(SERVICE_CLIENT, JSON.stringify(config));
-	log(`OAuth client ${config.clientId} imported into the Keychain.`);
+	log(`OAuth client ${result.config.clientId} imported into the Keychain.`);
 	log(`Now delete the plaintext file: rm '${path}'`);
 	return 0;
 }
