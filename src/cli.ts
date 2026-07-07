@@ -15,8 +15,12 @@ import {
 	serviceForAccount,
 	type ScopeTier,
 } from "./constants.js";
+import { createSlidesClient } from "./google/slides-client.js";
 import { SecurityCliKeychain } from "./keychain/security-cli.js";
 import type { KeychainStore } from "./keychain/store.js";
+import { buildSetupEngine } from "./setup/context.js";
+import type { SetupEngine } from "./setup/engine.js";
+import { STEP_IDS, type StepId } from "./setup/types.js";
 
 const USAGE = `slides-mcp CLI
 
@@ -25,6 +29,10 @@ Usage:
   node dist/cli.js auth login [--tier core|extended]
   node dist/cli.js auth status
   node dist/cli.js auth remove [email]
+  node dist/cli.js setup status
+  node dist/cli.js setup step [name] [--project-id <id>] [--install-gcloud]
+                              [--client-json <path>] [--confirm-delete]
+                              [--tier core|extended]
 `;
 
 const log = (line: string): void => void process.stderr.write(`${line}\n`);
@@ -147,11 +155,54 @@ async function authRemove(
 	return 0;
 }
 
+const flagValue = (args: string[], flag: string): string | undefined => {
+	const index = args.indexOf(flag);
+	return index >= 0 ? args[index + 1] : undefined;
+};
+
+async function setupCommand(
+	engine: SetupEngine,
+	command: string,
+	rest: string[],
+): Promise<number> {
+	if (command === "status") {
+		log(JSON.stringify(await engine.status(), null, 2));
+		return 0;
+	}
+	if (command === "step") {
+		const name = rest[0]?.startsWith("--") ? undefined : rest[0];
+		if (name && !STEP_IDS.includes(name as StepId)) {
+			log(`Unknown step "${name}" (valid: ${STEP_IDS.join(", ")})`);
+			return 1;
+		}
+		const result = await engine.run({
+			...(name ? { step: name as StepId } : {}),
+			projectId: flagValue(rest, "--project-id"),
+			installGcloud: rest.includes("--install-gcloud") || undefined,
+			clientJsonPath: flagValue(rest, "--client-json"),
+			confirmDeleteFile: rest.includes("--confirm-delete") || undefined,
+			tier: flagValue(rest, "--tier") as ScopeTier | undefined,
+		});
+		log(JSON.stringify(result, null, 2));
+		return result.status === "failed" ? 1 : 0;
+	}
+	process.stderr.write(USAGE);
+	return 1;
+}
+
 export async function main(
 	argv: string[],
 	keychain: KeychainStore = new SecurityCliKeychain(),
+	engine?: SetupEngine,
 ): Promise<number> {
 	const [group, command, ...rest] = argv;
+	if (group === "setup" && command) {
+		return setupCommand(
+			engine ?? buildSetupEngine(keychain, createSlidesClient),
+			command,
+			rest,
+		);
+	}
 	if (group !== "auth" || !command) {
 		process.stderr.write(USAGE);
 		return group ? 1 : 0;

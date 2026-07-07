@@ -68,7 +68,9 @@ const configuredDeps = async (
 		accessToken: "at-1",
 		expiresAt: Date.now() + 3_600_000,
 	}));
-	return { keychain, auth, slides: () => slides };
+	// Content-tool tests never touch the setup engine.
+	const setup = {} as ToolDeps["setup"];
+	return { keychain, auth, slides: () => slides, setup };
 };
 
 describe("create_presentation", () => {
@@ -164,6 +166,7 @@ describe("registerTools wrapper", () => {
 				throw new Error("unreachable");
 			}),
 			slides: () => fakeSlides({}).client,
+			setup: {} as ToolDeps["setup"],
 		};
 		const handlers = capture([createPresentation], deps);
 
