@@ -5,14 +5,23 @@ import type { ZodRawShape, objectOutputType, ZodTypeAny } from "zod";
 import { AuthManager, NotConfiguredError } from "../auth/manager.js";
 import type { KeychainStore } from "../keychain/store.js";
 import type { SlidesClientFactory } from "../google/slides-client.js";
+import type { SetupEngine } from "../setup/engine.js";
 import { translateGoogleError } from "../errors.js";
 import { setupRequired } from "../unconfigured.js";
 
-/** Dependencies injected into every tool handler (fakes in tests). */
+/**
+ * Dependencies injected into every tool handler (fakes in tests).
+ *
+ * Invariant: "unconfigured mode" is this wrapper catching NotConfiguredError
+ * thrown from AuthManager. Setup/diagnostic handlers must therefore never
+ * let a NotConfiguredError escape — they are exactly the tools that must
+ * work before anything is configured (PRD §5, §9 row 1).
+ */
 export interface ToolDeps {
 	keychain: KeychainStore;
 	auth: AuthManager;
 	slides: SlidesClientFactory;
+	setup: SetupEngine;
 }
 
 export interface ToolDefinition<Shape extends ZodRawShape> {
