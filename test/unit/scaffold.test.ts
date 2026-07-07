@@ -46,6 +46,6 @@ describe("unconfigured mode", () => {
 	it("returns a structured setup_required payload, never opaque", () => {
 		const payload = setupRequired("no OAuth client configured");
 		expect(payload.status).toBe("setup_required");
-		expect(payload.next_steps).toContain("cli.js auth");
+		expect(payload.next_steps).toContain("get_setup_status");
 	});
 });

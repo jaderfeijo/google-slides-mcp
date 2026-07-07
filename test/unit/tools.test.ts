@@ -176,7 +176,7 @@ describe("registerTools wrapper", () => {
 		const payload = JSON.parse(result.content[0].text);
 		expect(result.isError).toBeUndefined();
 		expect(payload.status).toBe("setup_required");
-		expect(payload.next_steps).toContain("auth login");
+		expect(payload.next_steps).toContain("get_setup_status");
 	});
 
 	it("translates Google errors into structured isError results", async () => {
