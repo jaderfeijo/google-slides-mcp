@@ -54,7 +54,7 @@ async function main(): Promise<void> {
 		diagnostics: buildDiagnostics(keychain),
 	};
 
-	const server = new McpServer({ name: "slides-mcp", version: "0.1.0" });
+	const server = new McpServer({ name: "slides-mcp", version: "1.0.0" });
 	registerTools(server, deps, TOOLS);
 
 	await probeKeychain(keychain);
