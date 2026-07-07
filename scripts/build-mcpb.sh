@@ -29,4 +29,9 @@ node "$EXTRACT_DIR/dist/cli.js" >/dev/null 2>&1 \
 	|| { echo "self-check failed: bundled cli.js did not run" >&2; exit 1; }
 echo "self-check ok: bundled server runs from the extracted artefact"
 
-shasum -a 256 "$ARTEFACT" | tee out/checksums.txt
+# macOS ships shasum (perl); the Debian CI image ships sha256sum (coreutils).
+if command -v shasum >/dev/null 2>&1; then
+	shasum -a 256 "$ARTEFACT" | tee out/checksums.txt
+else
+	sha256sum "$ARTEFACT" | tee out/checksums.txt
+fi
