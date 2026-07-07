@@ -41,3 +41,36 @@ export const TOKEN_EXPIRY_SKEW_MS = 60 * 1000;
 export const CONFIG_DIR_SUFFIX = ".config/slides-mcp";
 export const SETUP_STATE_FILE = "state.json";
 export const TEMPLATES_FILE = "templates.json";
+
+// Setup engine: external binaries, always absolute paths (PRD §9 — GUI
+// children have a minimal PATH)
+export const SW_VERS_PATH = "/usr/bin/sw_vers";
+export const GCLOUD_PROBE_PATHS = (homeDir: string): string[] => [
+	"/opt/homebrew/bin/gcloud",
+	"/usr/local/bin/gcloud",
+	`${homeDir}/google-cloud-sdk/bin/gcloud`,
+];
+export const BREW_PROBE_PATHS = [
+	"/opt/homebrew/bin/brew",
+	"/usr/local/bin/brew",
+];
+export const GCLOUD_SDK_INSTALL_URL = "https://cloud.google.com/sdk/docs/install";
+export const GCLOUD_INSTALL_TIMEOUT_MS = 10 * 60 * 1000;
+
+// Setup engine: project provisioning (PRD §5.1 step 3)
+export const PROJECT_ID_PREFIX = "slides-mcp-";
+export const PROJECT_DISPLAY_NAME = "Slides MCP";
+export const REQUIRED_SERVICES = [
+	"slides.googleapis.com",
+	"drive.googleapis.com",
+	"sheets.googleapis.com",
+];
+
+// Setup engine: Google Auth Platform console pages (PRD §5.1 step 4).
+// Kept here so a console URL rename is a one-line fix.
+export const consoleAuthUrl = (
+	page: "overview" | "branding" | "audience" | "scopes" | "clients/create",
+	projectId?: string,
+): string =>
+	`https://console.cloud.google.com/auth/${page}` +
+	(projectId ? `?project=${projectId}` : "");
