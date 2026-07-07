@@ -1,0 +1,15 @@
+{
+	"presentationId": "1AbCdEfGhIjKlMnOpQrStUvWxYz",
+	"title": "Q3 Partner Proposal",
+	"revisionId": "rev-1",
+	"locale": "en",
+	"slides": [
+		{
+			"objectId": "p1",
+			"slideProperties": {
+				"layoutObjectId": "layout-title",
+				"masterObjectId": "master-1"
+			}
+		}
+	]
+}

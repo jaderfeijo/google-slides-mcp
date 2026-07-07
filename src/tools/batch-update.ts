@@ -24,10 +24,44 @@ export const batchUpdate: ToolDefinition<typeof inputSchema> = {
 	name: "batch_update",
 	description:
 		"Full passthrough of presentations.batchUpdate — the complete Google " +
-		"Slides request surface in one tool. Returns the per-request replies " +
-		"and the deck's new revisionId for safe chaining.",
+		"Slides request surface in one tool. Returns the per-request replies, " +
+		"every affected objectId, and the deck's new revisionId for safe " +
+		"chaining.",
 	inputSchema,
-	async handler(_deps, _args) {
-		throw new Error("Not implemented yet — tracked in issue #15");
+	async handler(deps, args) {
+		const token = await deps.auth.getAccessToken();
+		const client = deps.slides(token);
+		const { data } = await client.presentations.batchUpdate({
+			presentationId: args.presentationId,
+			requestBody: {
+				requests: args.requests,
+				...(args.requiredRevisionId
+					? { writeControl: { requiredRevisionId: args.requiredRevisionId } }
+					: {}),
+			},
+		});
+		return {
+			presentationId: data.presentationId,
+			replies: data.replies ?? [],
+			objectIds: collectObjectIds(data.replies ?? []),
+			revisionId: data.writeControl?.requiredRevisionId,
+		};
 	},
 };
+
+/** Pulls every objectId out of the reply tree (PRD §7.4: write tools return
+ * affected object IDs so Claude can chain edits safely). */
+function collectObjectIds(value: unknown, found: string[] = []): string[] {
+	if (Array.isArray(value)) {
+		for (const item of value) collectObjectIds(item, found);
+	} else if (value && typeof value === "object") {
+		for (const [key, entry] of Object.entries(value)) {
+			if (key === "objectId" && typeof entry === "string") {
+				found.push(entry);
+			} else {
+				collectObjectIds(entry, found);
+			}
+		}
+	}
+	return found;
+}

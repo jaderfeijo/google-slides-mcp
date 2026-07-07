@@ -1,0 +1,27 @@
+{
+	"presentationId": "1AbCdEfGhIjKlMnOpQrStUvWxYz",
+	"title": "Q3 Partner Proposal",
+	"revisionId": "rev-7",
+	"pageSize": {
+		"width": { "magnitude": 9144000, "unit": "EMU" },
+		"height": { "magnitude": 5143500, "unit": "EMU" }
+	},
+	"slides": [
+		{
+			"objectId": "p1",
+			"pageElements": [
+				{
+					"objectId": "title-1",
+					"shape": {
+						"shapeType": "TEXT_BOX",
+						"text": {
+							"textElements": [
+								{ "textRun": { "content": "Q3 Partner Proposal\n" } }
+							]
+						}
+					}
+				}
+			]
+		}
+	]
+}
