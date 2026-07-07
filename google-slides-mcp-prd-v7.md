@@ -86,7 +86,7 @@ Within that process, **every tool handler must be stateless**: each `tools/call`
 
 **Runtime:** Node.js (LTS), TypeScript. Node is chosen over Python because the MCPB format runs on Claude Desktop's bundled Node runtime with no assumption of `uv`/`python` on the user's machine, and Claude Desktop's MCPB support is Node-first.
 
-**Native runtime, not Docker.** The server must run directly on macOS: the Keychain is only reachable from a native process, the OAuth flow must launch the user's default browser, and Claude Desktop spawns the server as a local stdio child process. Docker is used for everything it is good at in this project: CI, linting, building the MCPB, and integration tests against recorded API fixtures. `docker compose run ci` is the canonical build; `make dev` runs the server natively.
+**Native runtime, not Docker.** The server must run directly on macOS: the Keychain is only reachable from a native process, the OAuth flow must launch the user's default browser, and Claude Desktop spawns the server as a local stdio child process. Docker is used for everything it is good at in this project: CI, linting, building the MCPB, and integration tests against recorded API fixtures. `docker compose run ci` (wrapped as `make ci`) is the canonical build; `make run` runs the server natively.
 
 ---
 

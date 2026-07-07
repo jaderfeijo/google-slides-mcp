@@ -25,7 +25,9 @@ Google Slides. Canonical spec: `google-slides-mcp-prd-v7.md` (Draft v8;
 
 - One-ticket-one-PR: branch `feature/NNN-slug` per issue, PR body `Closes #NNN`.
 - Roadmap: GitHub milestones v0.1.0–v1.0.0, epics #1–#5 with sub-issues.
-- `docker compose run ci` is the canonical build; `make dev` runs natively.
+- The Makefile is the entry point for all common actions (`make` lists
+  targets): `make ci` is the canonical build, `make run` runs natively,
+  `make auth-login`/`auth-status` drive the bootstrap CLI.
 - Keychain integration tests are macOS-only (`make test-mac`); they self-skip
   in Docker.
 
