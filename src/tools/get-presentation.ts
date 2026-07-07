@@ -20,7 +20,13 @@ export const getPresentation: ToolDefinition<typeof inputSchema> = {
 		"mask). A compact summary mode is planned; until then prefer a fields " +
 		"mask for large decks.",
 	inputSchema,
-	async handler(_deps, _args) {
-		throw new Error("Not implemented yet — tracked in issue #15");
+	async handler(deps, args) {
+		const token = await deps.auth.getAccessToken();
+		const client = deps.slides(token);
+		const { data } = await client.presentations.get({
+			presentationId: args.presentationId,
+			...(args.fields ? { fields: args.fields } : {}),
+		});
+		return data;
 	},
 };

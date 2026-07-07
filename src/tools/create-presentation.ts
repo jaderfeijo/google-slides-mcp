@@ -15,7 +15,20 @@ export const createPresentation: ToolDefinition<typeof inputSchema> = {
 		"Create a new, empty Google Slides presentation. Returns the new " +
 		"presentationId, revisionId, and a URL for the user to open it.",
 	inputSchema,
-	async handler(_deps, _args) {
-		throw new Error("Not implemented yet — tracked in issue #15");
+	async handler(deps, args) {
+		const token = await deps.auth.getAccessToken();
+		const client = deps.slides(token);
+		const { data } = await client.presentations.create({
+			requestBody: {
+				title: args.title,
+				...(args.locale ? { locale: args.locale } : {}),
+			},
+		});
+		return {
+			presentationId: data.presentationId,
+			revisionId: data.revisionId,
+			title: data.title,
+			url: `https://docs.google.com/presentation/d/${data.presentationId}/edit`,
+		};
 	},
 };

@@ -1,0 +1,11 @@
+{
+	"presentationId": "1AbCdEfGhIjKlMnOpQrStUvWxYz",
+	"replies": [
+		{ "createSlide": { "objectId": "slide-2" } },
+		{},
+		{ "createShape": { "objectId": "shape-9" } }
+	],
+	"writeControl": {
+		"requiredRevisionId": "rev-8"
+	}
+}
