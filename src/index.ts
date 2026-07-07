@@ -6,22 +6,24 @@ import { AuthManager } from "./auth/manager.js";
 import { SERVICE_META } from "./constants.js";
 import { SecurityCliKeychain } from "./keychain/security-cli.js";
 import { createSlidesClient } from "./google/slides-client.js";
-import { buildSetupEngine } from "./setup/context.js";
+import { buildDiagnostics, buildSetupEngine } from "./setup/context.js";
 import { registerTools, type AnyToolDefinition } from "./tools/register.js";
 import { createPresentation } from "./tools/create-presentation.js";
 import { getPresentation } from "./tools/get-presentation.js";
 import { batchUpdate } from "./tools/batch-update.js";
 import { getSetupStatus } from "./tools/get-setup-status.js";
 import { runSetupStep } from "./tools/run-setup-step.js";
+import { runDiagnostics } from "./tools/run-diagnostics.js";
 
 // Only implemented tools are registered — Claude never sees dead tools.
-// Grows as milestone issues land (#27, #29-38).
+// Grows as milestone issues land (#29-38).
 const TOOLS: ReadonlyArray<AnyToolDefinition> = [
 	createPresentation,
 	getPresentation,
 	batchUpdate,
 	getSetupStatus,
 	runSetupStep,
+	runDiagnostics,
 ];
 
 /**
@@ -49,6 +51,7 @@ async function main(): Promise<void> {
 		auth: new AuthManager(keychain),
 		slides: createSlidesClient,
 		setup: buildSetupEngine(keychain, createSlidesClient),
+		diagnostics: buildDiagnostics(keychain),
 	};
 
 	const server = new McpServer({ name: "slides-mcp", version: "0.1.0" });

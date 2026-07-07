@@ -19,7 +19,8 @@ import { createSlidesClient } from "./google/slides-client.js";
 import { SecurityCliKeychain } from "./keychain/security-cli.js";
 import type { KeychainStore } from "./keychain/store.js";
 import { importClientJson } from "./setup/client-import.js";
-import { buildSetupEngine } from "./setup/context.js";
+import { buildDiagnostics, buildSetupEngine } from "./setup/context.js";
+import type { Diagnostics } from "./setup/diagnostics.js";
 import type { SetupEngine } from "./setup/engine.js";
 import { STEP_IDS, type StepId } from "./setup/types.js";
 
@@ -34,6 +35,7 @@ Usage:
   node dist/cli.js setup step [name] [--project-id <id>] [--install-gcloud]
                               [--client-json <path>] [--confirm-delete]
                               [--tier core|extended]
+  node dist/cli.js diagnostics [--account <email>]
 `;
 
 const log = (line: string): void => void process.stderr.write(`${line}\n`);
@@ -177,6 +179,7 @@ export async function main(
 	argv: string[],
 	keychain: KeychainStore = new SecurityCliKeychain(),
 	engine?: SetupEngine,
+	diagnostics?: Diagnostics,
 ): Promise<number> {
 	const [group, command, ...rest] = argv;
 	if (group === "setup" && command) {
@@ -185,6 +188,13 @@ export async function main(
 			command,
 			rest,
 		);
+	}
+	if (group === "diagnostics") {
+		const report = await (diagnostics ?? buildDiagnostics(keychain)).run(
+			flagValue([command ?? "", ...rest], "--account"),
+		);
+		log(JSON.stringify(report, null, 2));
+		return report.overall === "healthy" ? 0 : 1;
 	}
 	if (group !== "auth" || !command) {
 		process.stderr.write(USAGE);

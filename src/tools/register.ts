@@ -5,6 +5,7 @@ import type { ZodRawShape, objectOutputType, ZodTypeAny } from "zod";
 import { AuthManager, NotConfiguredError } from "../auth/manager.js";
 import type { KeychainStore } from "../keychain/store.js";
 import type { SlidesClientFactory } from "../google/slides-client.js";
+import type { Diagnostics } from "../setup/diagnostics.js";
 import type { SetupEngine } from "../setup/engine.js";
 import { translateGoogleError } from "../errors.js";
 import { setupRequired } from "../unconfigured.js";
@@ -22,6 +23,7 @@ export interface ToolDeps {
 	auth: AuthManager;
 	slides: SlidesClientFactory;
 	setup: SetupEngine;
+	diagnostics: Diagnostics;
 }
 
 export interface ToolDefinition<Shape extends ZodRawShape> {
