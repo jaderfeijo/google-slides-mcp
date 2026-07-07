@@ -1,0 +1,84 @@
+name: Release
+
+# Push a tag like prod/v0.2.0 to cut a release. The job refuses to publish
+# unless typecheck and the full test suite pass first, and unless the tag
+# version matches package.json.
+on:
+  push:
+    tags: ["prod/*"]
+
+permissions:
+  contents: write
+  id-token: write
+  attestations: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Verify tag matches package.json version
+        run: |
+          TAG_VERSION="${GITHUB_REF_NAME#prod/}"
+          TAG_VERSION="${TAG_VERSION#v}"
+          PKG_VERSION="$(node -p "require('./package.json').version")"
+          if [ "$TAG_VERSION" != "$PKG_VERSION" ]; then
+            echo "Tag version ($TAG_VERSION) does not match package.json ($PKG_VERSION)." >&2
+            echo "Bump package.json (and manifest.json) before tagging." >&2
+            exit 1
+          fi
+          MANIFEST_VERSION="$(node -p "require('./manifest.json').version")"
+          if [ "$TAG_VERSION" != "$MANIFEST_VERSION" ]; then
+            echo "Tag version ($TAG_VERSION) does not match manifest.json ($MANIFEST_VERSION)." >&2
+            exit 1
+          fi
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Tests (release gate)
+        run: npm test
+
+      - name: Build the MCPB bundle
+        run: ./scripts/build-mcpb.sh
+
+      # Cryptographically links the artefact to this exact workflow run and
+      # commit (PRD §8 release integrity).
+      - name: Attest build provenance
+        uses: actions/attest-build-provenance@v3
+        with:
+          subject-path: out/*.mcpb
+
+      - name: Create the GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          VERSION="${GITHUB_REF_NAME#prod/}"
+          ARTEFACT=(out/*.mcpb)
+          {
+            echo "Install: download \`$(basename "${ARTEFACT[0]}")\` and open it (or drag it into Claude Desktop)."
+            echo
+            echo '## SHA-256'
+            echo '```'
+            cat out/checksums.txt
+            echo '```'
+            echo
+            echo "Provenance: this artefact carries a GitHub build attestation — verify with:"
+            echo '```'
+            echo "gh attestation verify $(basename "${ARTEFACT[0]}") --repo ${GITHUB_REPOSITORY}"
+            echo '```'
+          } > /tmp/release-notes.md
+          gh release create "$GITHUB_REF_NAME" \
+            "${ARTEFACT[0]}" out/checksums.txt \
+            --title "slides-mcp $VERSION" \
+            --notes-file /tmp/release-notes.md \
+            --generate-notes
