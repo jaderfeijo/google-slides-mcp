@@ -29,9 +29,14 @@ node "$EXTRACT_DIR/dist/cli.js" >/dev/null 2>&1 \
 	|| { echo "self-check failed: bundled cli.js did not run" >&2; exit 1; }
 echo "self-check ok: bundled server runs from the extracted artefact"
 
+# Hash from inside out/ so checksums.txt carries the bare filename —
+# downloaders can then run `shasum -c checksums.txt` next to the artefact.
 # macOS ships shasum (perl); the Debian CI image ships sha256sum (coreutils).
-if command -v shasum >/dev/null 2>&1; then
-	shasum -a 256 "$ARTEFACT" | tee out/checksums.txt
-else
-	sha256sum "$ARTEFACT" | tee out/checksums.txt
-fi
+(
+	cd out
+	if command -v shasum >/dev/null 2>&1; then
+		shasum -a 256 "$(basename "$ARTEFACT")" | tee checksums.txt
+	else
+		sha256sum "$(basename "$ARTEFACT")" | tee checksums.txt
+	fi
+)
